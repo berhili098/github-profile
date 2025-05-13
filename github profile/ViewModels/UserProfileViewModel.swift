@@ -18,6 +18,14 @@ enum UserProfileState {
 class UserProfileViewModel: ObservableObject {
     @Published private(set) var state: UserProfileState = .idle
     private let githubService: GithubServiceProtocol
+    var isLoading: Bool {
+        switch state {
+        case .loading, .idle:
+            return true
+        default:
+            return false
+        }
+    }
     
     init(githubService: GithubServiceProtocol = GithubService()) {
         self.githubService = githubService

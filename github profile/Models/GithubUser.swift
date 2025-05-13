@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GithubUser: Codable, Identifiable {
+struct GithubUser: Codable {
     let id: Int
     let login: String
     let avatarUrl: String
@@ -17,14 +17,5 @@ struct GithubUser: Codable, Identifiable {
     let following: Int?
     let publicRepos: Int?
     
-    enum CodingKeys: String, CodingKey {
-        case id
-        case login
-        case avatarUrl = "avatar_url"
-        case bio
-        case name
-        case followers
-        case following
-        case publicRepos = "public_repos"
-    }
+  
 }

@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+import Combine
+
 
 enum UserProfileState {
     case loading
@@ -17,6 +19,9 @@ enum UserProfileState {
 
 class UserProfileViewModel: ObservableObject {
     @Published private(set) var state: UserProfileState = .idle
+    @Published  var username = "berhili098"
+    private var cancellables = Set<AnyCancellable>()
+
     private let githubService: GithubServiceProtocol
     var isLoading: Bool {
         switch state {
@@ -29,10 +34,32 @@ class UserProfileViewModel: ObservableObject {
     
     init(githubService: GithubServiceProtocol = GithubService()) {
         self.githubService = githubService
+        
+        observeTextField()
+        
+    
+      
+        
     }
     
+    
+    private func observeTextField() {
+         $username
+             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+             .removeDuplicates()
+             .receive(on: RunLoop.main)
+             .sink{[weak self]  _ in
+                 guard let self = self else { return }
+                                Task { await self.fetchUserProfile() }
+             }
+             .store(in: &cancellables)
+         
+      
+     }
+    
+    
     @MainActor
-    func fetchUserProfile(username: String) async {
+    func fetchUserProfile() async {
         state = .loading
         
         do {

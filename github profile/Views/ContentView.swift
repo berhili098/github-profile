@@ -10,14 +10,13 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = UserProfileViewModel()
     
-       @State  var username : String = "berhili098"
-    
-    
+
     var body: some View {
         NavigationView {
             VStack {
               TextFieldWidget(
-                text: $username
+                text: $viewModel.username,
+                placeholder: "Enter username"
               )
                 switch viewModel.state {
                 case .idle, .loading:
@@ -31,7 +30,7 @@ struct ContentView: View {
                 case .error(let message):
                     ErrorView(message: message, retryAction: {
                         Task {
-                            await viewModel.fetchUserProfile(username: username)
+                            await viewModel.fetchUserProfile()
                         }
                     })
                 }
@@ -40,7 +39,7 @@ struct ContentView: View {
                                     
                                     action: {
                     Task{
-                        await   viewModel.fetchUserProfile(username: username)
+                        await   viewModel.fetchUserProfile()
                     }
                 } , isLoading: viewModel.isLoading)
                 .padding()
@@ -49,7 +48,7 @@ struct ContentView: View {
             .padding()
             .navigationTitle("GitHub Profile")
             .task {
-                await viewModel.fetchUserProfile(username: username)
+                await viewModel.fetchUserProfile()
             }
         }
     }

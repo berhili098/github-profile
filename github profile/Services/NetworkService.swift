@@ -26,22 +26,35 @@ class NetworkService: NetworkServiceProtocol {
         
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
-            
+            // ✅ Print status code and headers
+                       if let httpResponse = response as? HTTPURLResponse {
+                           print("🛰️ Response Status Code: \(httpResponse.statusCode)")
+                           print("📋 Headers: \(httpResponse.allHeaderFields)")
+                       }
+
+                       // ✅ Print raw data as string (JSON text)
+                       if let jsonString = String(data: data, encoding: .utf8) {
+                           print("📦 Raw JSON: \(jsonString)")
+                       }
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
+                print("what happened")
                 throw NetworkError.invalidResponse
             }
-            
+                
             do {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 return try decoder.decode(T.self, from: data)
             } catch {
+                print("ok")
                 throw NetworkError.invalidData
             }
         } catch let error as NetworkError {
+            print("no")
             throw error
         } catch {
+            print("bad")
             throw NetworkError.networkError(error)
         }
     }

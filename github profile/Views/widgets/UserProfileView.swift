@@ -4,6 +4,10 @@ struct UserProfileView: View {
     let user: GithubUser
     
     var body: some View {
+        
+    
+        
+        
         ScrollView {
             VStack(spacing: 20) {
              
@@ -53,10 +57,24 @@ struct UserProfileView: View {
                     StatsView(value: user.publicRepos ?? 0, title: "Repos")
                 }
                 .padding(.top)
+                Text("\(String(user.calculateWorth())) $")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Text("Estimated worth")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+                    
+                
                 
                 Spacer()
             }
             .padding()
         }
     }
+}
+
+
+
+#Preview {
+    ContentView()
 }
